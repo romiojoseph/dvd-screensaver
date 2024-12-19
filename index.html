@@ -39,7 +39,7 @@
         let screenWidth = window.innerWidth;
         let screenHeight = window.innerHeight;
         let dvdWidth = 128;
-        let dvdHeight = dvd.naturalHeight * (dvdWidth / dvd.naturalWidth);
+        let dvdHeight = 0; // Initialize to 0 and update after the image loads
 
         let x = Math.random() * (screenWidth - dvdWidth);
         let y = Math.random() * (screenHeight - dvdHeight);
@@ -86,6 +86,8 @@
             if (currentIndex === 0) {
                 shuffleArray(svgFiles);
             }
+            // Update dimensions after changing the image
+            dvd.onload = updateDimensions;
         }
 
         function updateDimensions() {
@@ -96,9 +98,17 @@
         }
 
         window.addEventListener('resize', updateDimensions);
-        updateDimensions(); // Initial call to set dimensions
 
-        moveDvd();
+        // Ensure the initial dimensions are set correctly after the image loads
+        dvd.onload = function () {
+            updateDimensions();
+            dvd.style.left = x + 'px';
+            dvd.style.top = y + 'px';
+            moveDvd();
+        };
+
+        // Initial call to set dimensions and start the animation
+        updateDimensions();
     </script>
 </body>
 

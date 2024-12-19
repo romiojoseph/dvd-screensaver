@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVD Screensaver</title>
+    <meta name="description"
+        content="Revisit the classic DVD screensaver. Enjoy a touch of nostalgia. Watch the iconic DVD logo bounce around your screen, adapting seamlessly to any device.">
+    <meta property="og:image" content="assets/social-image.png">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <meta name="robots" content="index, follow">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+        }
+
+        #dvd {
+            position: absolute;
+            width: 128px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="assets/01.svg" alt="dvd" id="dvd">
+    <script>
+        const dvd = document.getElementById('dvd');
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+        let dvdWidth = 128;
+        let dvdHeight = dvd.naturalHeight * (dvdWidth / dvd.naturalWidth);
+
+        let x = Math.random() * (screenWidth - dvdWidth);
+        let y = Math.random() * (screenHeight - dvdHeight);
+        let dx = 2;
+        let dy = 2;
+
+        const svgFiles = ['01.svg', '02.svg', '03.svg', '04.svg', '05.svg', '06.svg'];
+        let currentIndex = 0;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        shuffleArray(svgFiles);
+
+        function moveDvd() {
+            x += dx;
+            y += dy;
+
+            // Check for collisions with the screen edges
+            if (x + dvdWidth > screenWidth || x < 0) {
+                dx = -dx;
+                x = Math.max(0, Math.min(x, screenWidth - dvdWidth)); // Ensure x stays within bounds
+                changeDvdImage();
+            }
+            if (y + dvdHeight > screenHeight || y < 0) {
+                dy = -dy;
+                y = Math.max(0, Math.min(y, screenHeight - dvdHeight)); // Ensure y stays within bounds
+                changeDvdImage();
+            }
+
+            dvd.style.left = x + 'px';
+            dvd.style.top = y + 'px';
+
+            requestAnimationFrame(moveDvd);
+        }
+
+        function changeDvdImage() {
+            dvd.src = `assets/${svgFiles[currentIndex]}`;
+            currentIndex = (currentIndex + 1) % svgFiles.length;
+            if (currentIndex === 0) {
+                shuffleArray(svgFiles);
+            }
+        }
+
+        function updateDimensions() {
+            screenWidth = window.innerWidth;
+            screenHeight = window.innerHeight;
+            dvdWidth = 128;
+            dvdHeight = dvd.naturalHeight * (dvdWidth / dvd.naturalWidth);
+        }
+
+        window.addEventListener('resize', updateDimensions);
+        updateDimensions(); // Initial call to set dimensions
+
+        moveDvd();
+    </script>
+</body>
+
+</html>
